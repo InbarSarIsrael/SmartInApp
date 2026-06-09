@@ -1,0 +1,27 @@
+# Python
+backend/.env
+backend/.venv/
+backend/__pycache__/
+*.pyc
+
+# React
+portal/node_modules/
+portal/dist/
+
+# Android
+android/.gradle/
+android/build/
+android/**/build/
+android/local.properties
+
+# Database backups
+backend/database/*.sql
+database/*.sql
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
