@@ -1,236 +1,368 @@
 # SmartInApp SDK
 
-\---
+A complete In-App Messaging platform for Android applications.
 
-## Overview
+SmartInApp enables developers to create, manage, deliver, display, and analyze targeted in-app messages through a complete full-stack solution consisting of:
 
-**SmartInApp** is a complete in-app messaging platform that allows developers to create, manage, display, and analyze messages inside Android applications.
+- Android SDK
+- FastAPI Backend
+- React Developer Portal
+- PostgreSQL Database
 
-The project includes:
+---
 
-* **Android SDK** for displaying in-app messages.
-* **React Developer Portal** for managing messages and viewing analytics.
-* **FastAPI Backend** for message delivery, project management, and analytics.
-* **PostgreSQL Database** for storing projects, messages, and user interaction events.
+# Features
 
-\---
+## In-App Messaging
 
-## Main Features
+- Dialog Messages
+- Top Banner Messages
+- Placement-Based Delivery
+- Audience Targeting
+- Message Scheduling
+- Enable / Disable Messages
+- Offline Message Caching
 
-### In-App Messaging
+## Android SDK
 
-* Dialog messages
-* Banner messages
-* Placement-based message delivery
-* Start and end date scheduling
-* Enable / Disable message control
-* Audience-based targeting
+- Simple initialization using API Key
+- Fetch active messages from backend
+- Display Dialog and Banner messages
+- Track analytics events
+- Cache messages locally
 
-### Android SDK
+## Developer Portal
 
-* Simple SDK initialization using an API key
-* Fetches active messages from the backend
-* Displays messages inside Android apps
-* Supports Dialog and Banner message types
-* Tracks user interactions
-* Supports offline message caching
+- Project Login
+- Create Messages
+- Edit Messages
+- Delete Messages
+- Enable / Disable Messages
+- Message Details View
+- Analytics Dashboard
 
-### Developer Portal
+## Analytics
 
-* Login using project API key
-* Create new messages
-* Edit existing messages
-* Enable or disable messages
-* View message details
-* View analytics dashboard
-* Track message performance
+- View Tracking
+- Click Tracking
+- Dismiss Tracking
+- CTR Calculation
+- Interaction Rate
+- Developer Insights
+- Top Performing Messages
+- CTR Over Time
 
-### Analytics
+---
 
-* View tracking
-* Click tracking
-* Dismiss tracking
-* CTR calculation
-* Interaction rate
-* Top performing messages
-* CTR over time
+# Screenshots
 
-\---
+## Analytics Dashboard
 
-## System Architecture
+![Analytics](images/analytics.png)
 
-```text
-Android App
-   |
-   | uses
-   v
-SmartInApp Android SDK
-   |
-   | HTTP requests
-   v
-FastAPI Backend
-   |
-   | stores and reads data
-   v
-PostgreSQL Database
-   ^
-   |
-React Developer Portal
+## Messages Management
+
+![Messages](images/messages.png)
+
+## Create Message
+
+![Create Message](images/new-message.png)
+
+## Message Details
+
+![Message Details](images/message-details.png)
+
+## SDK Dialog
+
+![Dialog](images/dialog.jpg)
+
+## SDK Banner
+
+![Banner](images/banner.jpg)
+
+---
+
+# System Architecture
+
+```mermaid
+flowchart LR
+
+    APP[Android Application]
+
+    SDK[SmartInApp SDK]
+
+    BACKEND[FastAPI Backend]
+
+    DB[(PostgreSQL)]
+
+    PORTAL[React Developer Portal]
+
+    APP --> SDK
+
+    SDK -->|Fetch Messages| BACKEND
+    SDK -->|Send Analytics| BACKEND
+
+    PORTAL -->|Manage Messages| BACKEND
+    PORTAL -->|View Analytics| BACKEND
+
+    BACKEND --> DB
 ```
 
-\---
+---
 
-## Project Structure
+# Database ERD
 
-```text
-SmartInApp/
-│
-├── android/
-│   ├── app/                 # Demo Android application
-│   └── smartinapp-sdk/      # Android SDK module
-│
-├── backend/
-│   ├── core/                # Database connection and core settings
-│   ├── database/            # Database initialization scripts
-│   ├── routes/              # FastAPI route files
-│   ├── services/            # Business logic
-│   ├── app.py               # FastAPI entry point
-│   ├── models.py            # Data models
-│   └── requirements.txt     # Python dependencies
-│
-├── portal/
-│   ├── src/
-│   │   ├── components/      # Dashboard and UI components
-│   │   ├── pages/           # Portal pages
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-│
-├── database/                # General database files
-├── .gitignore
-└── README.md
+```mermaid
+erDiagram
+
+    PROJECTS {
+        int id PK
+        string name
+        string api_key
+    }
+
+    MESSAGES {
+        int id PK
+        int project_id FK
+        string title
+        string body
+        string type
+        string placement
+        string audience
+        boolean enabled
+        datetime start_date
+        datetime end_date
+    }
+
+    ANALYTICS_EVENTS {
+        int id PK
+        int message_id FK
+        string event_type
+        datetime created_at
+    }
+
+    MESSAGE_ANALYTICS_SUMMARY {
+        int message_id PK
+        int views
+        int clicks
+        int dismisses
+    }
+
+    PROJECT_ANALYTICS_SUMMARY {
+        int project_id PK
+        int views
+        int clicks
+        int dismisses
+    }
+
+    PROJECTS ||--o{ MESSAGES : owns
+
+    MESSAGES ||--o{ ANALYTICS_EVENTS : generates
+
+    MESSAGES ||--|| MESSAGE_ANALYTICS_SUMMARY : aggregates
+
+    PROJECTS ||--|| PROJECT_ANALYTICS_SUMMARY : aggregates
 ```
 
-\---
+---
 
-## Technologies Used
+# SDK Flow
 
-|Layer|Technologies|
-|-|-|
-|Android SDK|Kotlin, Retrofit, Gson, OkHttp|
-|Demo App|Android, Kotlin, XML Layouts|
-|Backend|Python, FastAPI, Psycopg2|
-|Database|PostgreSQL|
-|Portal|React, Vite, Recharts|
-|Tools|Git, GitHub, Android Studio, PyCharm|
+```mermaid
+sequenceDiagram
 
-\---
+    Android App->>SDK: initialize(apiKey)
 
-## Database Tables
+    SDK->>Backend: GET /messages
 
-The system is based on three main tables:
+    Backend->>Database: Load active messages
 
-|Table|Purpose|
-|-|-|
-|`projects`|Stores projects and API keys|
-|`messages`|Stores in-app messages and targeting data|
-|`analytics\_events`|Stores view, click, and dismiss events|
+    Database-->>Backend: Messages
 
-\---
+    Backend-->>SDK: Messages
 
-## Backend API
+    SDK->>User: Display Dialog / Banner
 
-Main backend responsibilities:
-
-* Create and manage projects
-* Create, update, enable, disable, and delete messages
-* Deliver active messages to the SDK
-* Receive analytics events from the SDK
-* Provide analytics data to the portal
-
-\---
-
-## Android SDK Flow
-
-1. The app initializes the SDK with an API key.
-2. The SDK requests active messages from the backend.
-3. The backend returns messages that match:
-
-   * Project API key
-   * Placement
-   * Audience
-   * Enabled status
-   * Active date range
-4. The SDK displays the message.
-5. The SDK sends analytics events:
-
-   * View
-   * Click
-   * Dismiss
-6. The portal displays the collected analytics.
-
-\---
-
-## Analytics Flow
-
-```text
-Message displayed
-      |
-      v
-VIEW event sent
-      |
-User clicks or dismisses
-      |
-      v
-CLICK / DISMISS event sent
-      |
-      v
-Event saved in PostgreSQL
-      |
-      v
-Portal dashboard updates analytics
+    SDK->>Backend: VIEW / CLICK / DISMISS
 ```
 
-\---	
+---
 
-## Security Notes
+# Analytics Optimization
 
-Sensitive files are ignored using `.gitignore`.
+To improve performance, analytics are stored in two layers.
 
-The following files should not be uploaded to GitHub:
+### Raw Events
+
+Every user interaction is stored in:
 
 ```text
-backend/.env
-backend/.venv/
-portal/node\_modules/
-android/build/
-android/.gradle/
-\*.sql database backup files
+analytics_events
 ```
 
-The database password and local environment variables must stay only on the local machine.
+### Summary Tables
 
-\---
+The backend updates optimized summary tables in real time:
 
-## Current Status
+```text
+message_analytics_summary
+project_analytics_summary
+```
 
-Implemented:
+This architecture prevents expensive aggregation queries on large datasets and allows analytics dashboards to load instantly.
 
-* Backend API
-* PostgreSQL database structure
-* React developer portal
-* Android SDK module
-* Demo Android app
-* Message management
-* Analytics tracking
-* CTR dashboard
-* Offline cache support
+```mermaid
+flowchart TD
 
-\---
+    EVENT[VIEW / CLICK / DISMISS]
 
-## Author
+    RAW[analytics_events]
 
-**Inbar Sar Israel**  
-Computer Science Student  
+    MSG[message_analytics_summary]
+
+    PROJ[project_analytics_summary]
+
+    DASH[Analytics Dashboard]
+
+    EVENT --> RAW
+
+    EVENT --> MSG
+
+    EVENT --> PROJ
+
+    DASH --> MSG
+
+    DASH --> PROJ
+```
+
+---
+
+# Backend Architecture
+
+The backend is divided into three logical layers.
+
+## Endpoint Functions
+
+Receive HTTP requests from the SDK and Portal.
+
+Examples:
+
+```text
+POST /portal/login
+GET /messages
+POST /analytics/event
+GET /analytics/project/{id}
+```
+
+## Service Functions
+
+Contain the business logic of the application.
+
+Examples:
+
+```text
+create_message()
+update_message()
+delete_message()
+save_analytics_event()
+get_project_analytics()
+```
+
+## Private Functions
+
+Internal helper functions used by the backend.
+
+Examples:
+
+```text
+get_db_connection()
+update_summary_tables()
+get_message_status()
+```
+
+### Request Flow
+
+```mermaid
+flowchart TD
+
+    REQUEST[HTTP Request]
+
+    ENDPOINT[Endpoint Function]
+
+    SERVICE[Service Function]
+
+    PRIVATE[Private Function]
+
+    DATABASE[(PostgreSQL)]
+
+    REQUEST --> ENDPOINT
+    ENDPOINT --> SERVICE
+    SERVICE --> PRIVATE
+    PRIVATE --> DATABASE
+```
+
+---
+
+# How To Use
+
+## Backend
+
+```bash
+cd backend
+
+pip install -r requirements.txt
+
+uvicorn app:app --reload
+```
+
+## Developer Portal
+
+```bash
+cd portal
+
+npm install
+
+npm run dev
+```
+
+## Android SDK
+
+Initialize the SDK:
+
+```kotlin
+SmartInApp.initialize(
+    context = applicationContext,
+    apiKey = "YOUR_API_KEY"
+)
+```
+
+Display messages:
+
+```kotlin
+SmartInApp.showMessage(
+    placement = "home_screen",
+    userType = "BUYER"
+)
+```
+
+---
+
+# Technologies
+
+| Layer | Technologies |
+|---------|---------|
+| Android SDK | Kotlin, Retrofit, Gson |
+| Backend | Python, FastAPI, Psycopg2 |
+| Database | PostgreSQL |
+| Portal | React, Vite, Recharts |
+| Tools | Git, GitHub, Android Studio, PyCharm, pgAdmin |
+
+---
+
+# Author
+
+**Inbar Sar Israel**
+
+B.Sc. Computer Science
+
 Afeka Academic College of Engineering
-

@@ -7,14 +7,14 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    private const val DEFAULT_BASE_URL = "http://192.168.1.241:8000/"
+    private const val DEFAULT_BASE_URL = "http://172.20.17.251:8000/"
 
     private var baseUrl = DEFAULT_BASE_URL
 
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(2, TimeUnit.SECONDS)
-        .readTimeout(2, TimeUnit.SECONDS)
-        .writeTimeout(2, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
         .build()
 
     var apiService: ApiService = createApiService()

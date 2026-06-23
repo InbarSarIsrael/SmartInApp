@@ -5,22 +5,8 @@ def save_analytics_event(message_id, event_type):
     with get_db_cursor(commit=True) as cur:
         cur.execute(
             """
-            INSERT INTO analytics_events (message_id, event_type)
-            VALUES (%s, %s)
-            """,
-            (message_id, event_type)
-        )
-
-# Returns view, click, dismiss, and CTR counts for one message.
-def get_analytics_summary(message_id):
-    with get_db_cursor() as cur:
-        cur.execute(
-            """
-            SELECT
-                COUNT(*) FILTER (WHERE event_type = 'VIEW') AS views,
-                COUNT(*) FILTER (WHERE event_type = 'CLICK') AS clicks,
-                COUNT(*) FILTER (WHERE event_type = 'DISMISS') AS dismisses
-            FROM analytics_events
+            SELECT project_id
+            FROM messages
             WHERE message_id = %s
             """,
             (message_id,)
@@ -28,9 +14,72 @@ def get_analytics_summary(message_id):
 
         result = cur.fetchone()
 
-    views = result[0]
-    clicks = result[1]
-    dismisses = result[2]
+        if result is None:
+            return False
+
+        project_id = result[0]
+
+        cur.execute(
+            """
+            INSERT INTO analytics_events (message_id, event_type)
+            VALUES (%s, %s)
+            """,
+            (message_id, event_type)
+        )
+
+        if event_type == "VIEW":
+            column_name = "views"
+        elif event_type == "CLICK":
+            column_name = "clicks"
+        elif event_type == "DISMISS":
+            column_name = "dismisses"
+        else:
+            return False
+
+        cur.execute(
+            f"""
+            INSERT INTO message_analytics_summary (message_id, {column_name})
+            VALUES (%s, 1)
+            ON CONFLICT (message_id)
+            DO UPDATE SET {column_name} = message_analytics_summary.{column_name} + 1
+            """,
+            (message_id,)
+        )
+
+        cur.execute(
+            f"""
+            INSERT INTO project_analytics_summary (project_id, {column_name})
+            VALUES (%s, 1)
+            ON CONFLICT (project_id)
+            DO UPDATE SET {column_name} = project_analytics_summary.{column_name} + 1
+            """,
+            (project_id,)
+        )
+
+    return True
+
+# Returns view, click, dismiss, and CTR counts for one message.
+def get_analytics_summary(message_id):
+    with get_db_cursor() as cur:
+        cur.execute(
+            """
+            SELECT views, clicks, dismisses
+            FROM message_analytics_summary
+            WHERE message_id = %s
+            """,
+            (message_id,)
+        )
+
+        result = cur.fetchone()
+
+    if result is None:
+        views = 0
+        clicks = 0
+        dismisses = 0
+    else:
+        views = result[0]
+        clicks = result[1]
+        dismisses = result[2]
 
     ctr = 0
     if views > 0:
@@ -49,24 +98,29 @@ def get_project_analytics_summary(project_id):
     with get_db_cursor() as cur:
         cur.execute(
             """
-            SELECT
-                COUNT(*) FILTER (WHERE ae.event_type = 'VIEW') AS views,
-                COUNT(*) FILTER (WHERE ae.event_type = 'CLICK') AS clicks,
-                COUNT(*) FILTER (WHERE ae.event_type = 'DISMISS') AS dismisses
-            FROM analytics_events ae
-            JOIN messages m ON ae.message_id = m.message_id
-            WHERE m.project_id = %s
+            SELECT views, clicks, dismisses
+            FROM project_analytics_summary
+            WHERE project_id = %s
             """,
             (project_id,)
         )
 
         result = cur.fetchone()
 
+    if result is None:
+        views = 0
+        clicks = 0
+        dismisses = 0
+    else:
+        views = result[0]
+        clicks = result[1]
+        dismisses = result[2]
+
     return {
         "project_id": project_id,
-        "views": result[0],
-        "clicks": result[1],
-        "dismisses": result[2]
+        "views": views,
+        "clicks": clicks,
+        "dismisses": dismisses
     }
 
 # Returns the top 5 project messages ordered by click-through rate.
@@ -75,22 +129,18 @@ def get_top_messages_by_ctr(project_id):
         cur.execute(
             """
             SELECT
-                m.message_id, m.title,
-                COUNT(*) FILTER (WHERE ae.event_type = 'VIEW') AS views,
-                COUNT(*) FILTER (WHERE ae.event_type = 'CLICK') AS clicks,
+                m.message_id,
+                m.title,
+                COALESCE(s.views, 0) AS views,
+                COALESCE(s.clicks, 0) AS clicks,
                 CASE
-                    WHEN COUNT(*) FILTER (WHERE ae.event_type = 'VIEW') = 0 THEN 0
-                    ELSE
-                        (
-                            COUNT(*) FILTER (WHERE ae.event_type = 'CLICK')::float
-                            / COUNT(*) FILTER (WHERE ae.event_type = 'VIEW')
-                        ) * 100
+                    WHEN COALESCE(s.views, 0) = 0 THEN 0
+                    ELSE (COALESCE(s.clicks, 0)::float / s.views) * 100
                 END AS ctr
             FROM messages m
-            LEFT JOIN analytics_events ae
-                ON m.message_id = ae.message_id
+            LEFT JOIN message_analytics_summary s
+                ON m.message_id = s.message_id
             WHERE m.project_id = %s
-            GROUP BY m.message_id, m.title
             ORDER BY ctr DESC
             LIMIT 5
             """,

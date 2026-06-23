@@ -42,3 +42,16 @@ CREATE TABLE IF NOT EXISTS analytics_events (
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS message_analytics_summary (
+    message_id INTEGER PRIMARY KEY REFERENCES messages(message_id) ON DELETE CASCADE,
+    views INTEGER NOT NULL DEFAULT 0,
+    clicks INTEGER NOT NULL DEFAULT 0,
+    dismisses INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS project_analytics_summary (
+    project_id INTEGER PRIMARY KEY REFERENCES projects(project_id) ON DELETE CASCADE,
+    views INTEGER NOT NULL DEFAULT 0,
+    clicks INTEGER NOT NULL DEFAULT 0,
+    dismisses INTEGER NOT NULL DEFAULT 0
+);
