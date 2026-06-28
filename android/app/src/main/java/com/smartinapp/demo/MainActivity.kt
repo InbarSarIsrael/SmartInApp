@@ -18,7 +18,7 @@ class MainActivity : Activity() {
         const val AUDIENCE_BUYER = "BUYER"
         const val AUDIENCE_SELLER = "SELLER"
         const val AUDIENCE_MANAGER = "MANAGER"
-        private const val SMART_IN_APP_BASE_URL = "http://10.0.0.15:8000/"
+        private const val SMART_IN_APP_BASE_URL = "http://0.0.0.0:8000/"
         private const val SMART_IN_APP_API_KEY = "pk_test_bookstore_123"
     }
 

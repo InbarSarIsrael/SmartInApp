@@ -301,8 +301,10 @@ cd backend
 
 pip install -r requirements.txt
 
-uvicorn app:app --reload
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
+
+The `--host 0.0.0.0` option allows the Android demo app to reach the backend from an emulator or a physical device on the same network.
 
 ## Developer Portal
 
