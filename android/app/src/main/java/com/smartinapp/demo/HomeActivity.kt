@@ -7,13 +7,14 @@ import android.widget.Button
 import android.widget.TextView
 import com.smartinapp.sdk.SmartInApp
 import com.smartinapp.sdk.SmartInAppBannerView
-import com.smartinapp.sdk.SmartInAppMessages
+import com.smartinapp.sdk.SmartInAppDialogs
 
 class HomeActivity : Activity() {
 
     private lateinit var bannerView: SmartInAppBannerView
     private lateinit var goShoppingButton: Button
     private lateinit var userTypeText: TextView
+    private lateinit var currentAudience: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,28 +24,35 @@ class HomeActivity : Activity() {
         goShoppingButton = findViewById(R.id.go_shopping_button)
         userTypeText = findViewById(R.id.user_type_text)
 
-        val audience = intent.getStringExtra(MainActivity.EXTRA_USER_AUDIENCE)
+        currentAudience = intent.getStringExtra(MainActivity.EXTRA_USER_AUDIENCE)
             ?: MainActivity.AUDIENCE_BUYER
-        userTypeText.text = "User Type: $audience"
+        SmartInApp.setUserAudience(currentAudience)
+        userTypeText.text = "User Type: $currentAudience"
 
         goShoppingButton.setOnClickListener {
-            startActivity(Intent(this, BooksActivity::class.java))
+            openBooks()
         }
 
         SmartInApp.setNavigationHandler { target ->
             when (target) {
                 "books_screen" -> {
-                    startActivity(Intent(this, BooksActivity::class.java))
+                    openBooks()
                 }
             }
         }
 
         bannerView.load("home_screen")
 
-        SmartInAppMessages.show(
+        SmartInAppDialogs.load(
             context = this@HomeActivity,
             placement = "home_screen"
         )
+    }
+
+    private fun openBooks() {
+        val intent = Intent(this, BooksActivity::class.java)
+        intent.putExtra(MainActivity.EXTRA_USER_AUDIENCE, currentAudience)
+        startActivity(intent)
     }
 
 //    override fun onResume() {
@@ -54,7 +62,7 @@ class HomeActivity : Activity() {
 //            SmartInApp.refresh()
 //            bannerView.load("home_screen")
 //
-//            SmartInAppMessages.show(
+//            SmartInAppDialogs.load(
 //                context = this@HomeActivity,
 //                placement = "home_screen"
 //            )

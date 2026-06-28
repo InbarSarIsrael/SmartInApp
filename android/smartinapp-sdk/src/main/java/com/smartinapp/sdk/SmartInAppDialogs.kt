@@ -7,10 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-object SmartInAppMessages {
+object SmartInAppDialogs {
 
     // Loads and shows dialog messages for a placement.
-    fun show(context: Context, placement: String) {
+    fun load(context: Context, placement: String) {
         val scope = MainScope()
 
         scope.launch {

@@ -8,6 +8,9 @@ SmartInApp enables developers to create, manage, deliver, display, and analyze t
 - FastAPI Backend
 - React Developer Portal
 - PostgreSQL Database
+- VitePress Documentation Website
+
+Full developer documentation is available in [`docs/docs/index.md`](docs/docs/index.md). It explains how to integrate the Android SDK, initialize SmartInApp, load banner and dialog messages, configure audiences and placements, handle navigation actions, and understand the platform architecture.
 
 ---
 
@@ -30,6 +33,14 @@ SmartInApp enables developers to create, manage, deliver, display, and analyze t
 - Display Dialog and Banner messages
 - Track analytics events
 - Cache messages locally
+
+## Documentation Website
+
+- VitePress documentation page
+- Android SDK integration guide
+- Kotlin examples for banners, dialogs, audiences, and navigation
+- API, database, analytics, and architecture explanations
+- Project demo video
 
 ## Developer Portal
 
@@ -58,27 +69,27 @@ SmartInApp enables developers to create, manage, deliver, display, and analyze t
 
 ## Analytics Dashboard
 
-![Analytics](images/analytics.png)
+<img src="images/analytics.png" alt="Analytics Dashboard" width="720" />
 
 ## Messages Management
 
-![Messages](images/messages.png)
+<img src="images/messages.png" alt="Messages Management" width="720" />
 
 ## Create Message
 
-![Create Message](images/new-message.png)
+<img src="images/new-message.png" alt="Create Message" width="720" />
 
 ## Message Details
 
-![Message Details](images/message-details.png)
+<img src="images/message-details.png" alt="Message Details" width="720" />
 
 ## SDK Dialog
 
-![Dialog](images/dialog.jpg)
+<img src="images/dialog.jpg" alt="SDK Dialog" width="320" />
 
 ## SDK Banner
 
-![Banner](images/banner.jpg)
+<img src="images/banner.jpg" alt="SDK Banner" width="320" />
 
 ---
 
@@ -162,28 +173,6 @@ erDiagram
     MESSAGES ||--|| MESSAGE_ANALYTICS_SUMMARY : aggregates
 
     PROJECTS ||--|| PROJECT_ANALYTICS_SUMMARY : aggregates
-```
-
----
-
-# SDK Flow
-
-```mermaid
-sequenceDiagram
-
-    Android App->>SDK: initialize(apiKey)
-
-    SDK->>Backend: GET /messages
-
-    Backend->>Database: Load active messages
-
-    Database-->>Backend: Messages
-
-    Backend-->>SDK: Messages
-
-    SDK->>User: Display Dialog / Banner
-
-    SDK->>Backend: VIEW / CLICK / DISMISS
 ```
 
 ---
@@ -330,20 +319,48 @@ npm run dev
 Initialize the SDK:
 
 ```kotlin
+SmartInApp.setBaseUrl("http://10.0.0.15:8000/")
+
 SmartInApp.initialize(
     context = applicationContext,
     apiKey = "YOUR_API_KEY"
 )
 ```
 
-Display messages:
+Set the current user audience:
 
 ```kotlin
-SmartInApp.showMessage(
-    placement = "home_screen",
-    userType = "BUYER"
+SmartInApp.setUserAudience("BUYER")
+```
+
+Display a banner message:
+
+```kotlin
+bannerView.load("home_screen")
+```
+
+Display a dialog message:
+
+```kotlin
+SmartInAppDialogs.load(
+    context = this,
+    placement = "home_screen"
 )
 ```
+
+Register navigation for message action buttons:
+
+```kotlin
+SmartInApp.setNavigationHandler { target ->
+    when (target) {
+        "books_screen" -> {
+            startActivity(Intent(this, BooksActivity::class.java))
+        }
+    }
+}
+```
+
+The SDK automatically filters messages by placement and audience. A user with audience `BUYER` can receive both `BUYER` and `ALL` messages for the same placement.
 
 ---
 

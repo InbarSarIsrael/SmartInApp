@@ -22,15 +22,6 @@
         android:textSize="26sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/books_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="- Clean Code\n- Atomic Habits\n- The Pragmatic Programmer"
-        android:textColor="@color/text_primary"
-        android:textSize="18sp" />
-
     <Button
         android:id="@+id/home_button"
         android:layout_width="wrap_content"
