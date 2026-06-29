@@ -1,11 +1,9 @@
-# SmartInApp Android SDK
-
 <div class="hero">
-  <p class="hero-kicker">In-app messaging for Android</p>
-  <h1>Show targeted messages inside your Android app with a simple Kotlin SDK.</h1>
+  <h1>SmartInApp Android SDK</h1>
+  <p class="hero-kicker">Remote in-app messaging for Android</p>
   <p>
-    SmartInApp lets developers fetch messages from a backend, display dialogs and banners,
-    handle message actions, and track views, clicks, and dismisses from Android code.
+    Add targeted dialogs and banners to your Android app, handle message actions,
+    and track engagement from one simple Kotlin SDK.
   </p>
 </div>
 
@@ -445,10 +443,22 @@ SmartInApp is built as a complete platform:
 
 :::
 
-## Project demo video
+## Project videos
 
-This short video shows the SmartInApp flow from the Developer Portal to the Android demo app.
-It demonstrates creating a message, choosing placement and audience settings, displaying the message through the SDK, and viewing the analytics result in the dashboard.
+These videos show the idea behind SmartInApp and how it works in the demo project.
+
+### Why use SmartInApp SDK?
+
+See how SmartInApp helps update in-app messages remotely without releasing a new app version.
+
+<video class="implementation-video" controls>
+  <source src="/videos/ad-sdk.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+### Project demo
+
+See the full flow: create a message, display it in the Android app, and view analytics in the portal.
 
 <video class="implementation-video" controls>
   <source src="/videos/demo.mp4" type="video/mp4" />
