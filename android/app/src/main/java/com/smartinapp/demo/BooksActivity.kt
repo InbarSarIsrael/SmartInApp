@@ -58,16 +58,6 @@ class BooksActivity : Activity() {
         finish()
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//
-//        activityScope.launch {
-//            SmartInApp.refresh()
-//            bannerView.load("books_screen")
-//
-//        }
-//    }
-
     override fun onDestroy() {
         super.onDestroy()
         activityScope.cancel()

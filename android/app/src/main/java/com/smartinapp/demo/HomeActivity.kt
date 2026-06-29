@@ -55,18 +55,4 @@ class HomeActivity : Activity() {
         startActivity(intent)
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//
-//        activityScope.launch {
-//            SmartInApp.refresh()
-//            bannerView.load("home_screen")
-//
-//            SmartInAppDialogs.load(
-//                context = this@HomeActivity,
-//                placement = "home_screen"
-//            )
-//        }
-//    }
-
 }

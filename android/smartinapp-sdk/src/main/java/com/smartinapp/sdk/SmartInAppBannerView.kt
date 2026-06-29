@@ -13,7 +13,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class SmartInAppBannerView @JvmOverloads constructor(
+public class SmartInAppBannerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -38,7 +38,7 @@ class SmartInAppBannerView @JvmOverloads constructor(
     }
 
     // Loads banner messages for a placement and displays the first available one.
-    fun load(placement: String) {
+    public fun load(placement: String) {
         viewScope.launch {
             messages = SmartInApp.getBannerMessages(placement)
             currentIndex = 0

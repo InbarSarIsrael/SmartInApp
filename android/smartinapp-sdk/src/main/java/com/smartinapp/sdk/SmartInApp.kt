@@ -91,7 +91,7 @@ object SmartInApp {
     }
 
     // Fetches active messages from the backend and falls back to cached data.
-    suspend fun fetchMessages(placement: String): List<MessageDto> {
+    private suspend fun fetchMessages(placement: String): List<MessageDto> {
         val currentApiKey = apiKey ?: return getCachedMessages(placement)
 
         val response = try {
@@ -113,21 +113,21 @@ object SmartInApp {
     }
 
     // Returns dialog messages for the current placement and audience.
-    suspend fun getDialogMessages(placement: String): List<MessageDto> {
+    internal suspend fun getDialogMessages(placement: String): List<MessageDto> {
         return fetchMessages(placement).filter { message ->
             message.type == "DIALOG" && isMessageForCurrentAudience(message)
         }
     }
 
     // Returns banner messages for the current placement and audience.
-    suspend fun getBannerMessages(placement: String): List<MessageDto> {
+    internal suspend fun getBannerMessages(placement: String): List<MessageDto> {
         return fetchMessages(placement).filter { message ->
             message.type == "BANNER" && isMessageForCurrentAudience(message)
         }
     }
 
     // Reports that a message was shown to the user.
-    suspend fun trackView(messageId: Int) {
+    internal suspend fun trackView(messageId: Int) {
         try {
             RetrofitClient.apiService.trackView(
                 AnalyticsEventRequest(message_id = messageId)
@@ -137,7 +137,7 @@ object SmartInApp {
     }
 
     // Reports that a message action button was clicked.
-    suspend fun trackClick(messageId: Int) {
+    internal suspend fun trackClick(messageId: Int) {
         try {
             RetrofitClient.apiService.trackClick(
                 AnalyticsEventRequest(message_id = messageId)
@@ -147,7 +147,7 @@ object SmartInApp {
     }
 
     // Reports that a message was closed or dismissed.
-    suspend fun trackDismiss(messageId: Int) {
+    internal suspend fun trackDismiss(messageId: Int) {
         try {
             RetrofitClient.apiService.trackDismiss(
                 AnalyticsEventRequest(message_id = messageId)
@@ -157,12 +157,12 @@ object SmartInApp {
     }
 
     // Checks if a message was already shown in this app session.
-    fun wasMessageShown(messageId: Int): Boolean {
+    internal fun wasMessageShown(messageId: Int): Boolean {
         return shownMessageIds.contains(messageId)
     }
 
     // Marks a message as already shown for this app session.
-    fun markMessageAsShown(messageId: Int) {
+    internal fun markMessageAsShown(messageId: Int) {
         shownMessageIds.add(messageId)
     }
 
@@ -172,7 +172,7 @@ object SmartInApp {
     }
 
     // Sends a message action target to the app navigation handler.
-    fun handleNavigation(target: String?) {
+    internal fun handleNavigation(target: String?) {
         if (target.isNullOrBlank()) {
             return
         }
@@ -195,7 +195,7 @@ object SmartInApp {
     }
 
     // Returns the API key from memory or shared preferences.
-    fun getApiKey(context: Context): String? {
+    private fun getApiKey(context: Context): String? {
         if (apiKey != null) {
             return apiKey
         }
@@ -208,7 +208,7 @@ object SmartInApp {
     }
 
     // Returns the project data loaded during SDK initialization.
-    fun getProject(): ProjectDto? {
+    private fun getProject(): ProjectDto? {
         return project
     }
 
