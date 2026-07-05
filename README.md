@@ -69,27 +69,27 @@ Full developer documentation is available in [`docs/docs/index.md`](docs/docs/in
 
 ## Analytics Dashboard
 
-<img src="images/analytics.png" alt="Analytics Dashboard" width="720" />
+<img src="images%20and%20videos/analytics.png" alt="Analytics Dashboard" width="720" />
 
 ## Messages Management
 
-<img src="images/messages.png" alt="Messages Management" width="720" />
+<img src="images%20and%20videos/messages.png" alt="Messages Management" width="720" />
 
 ## Create Message
 
-<img src="images/new-message.png" alt="Create Message" width="720" />
+<img src="images%20and%20videos/new-message.png" alt="Create Message" width="720" />
 
 ## Message Details
 
-<img src="images/message-details.png" alt="Message Details" width="720" />
+<img src="images%20and%20videos/message-details.png" alt="Message Details" width="720" />
 
 ## SDK Dialog
 
-<img src="images/dialog.jpg" alt="SDK Dialog" width="320" />
+<img src="images%20and%20videos/dialog.jpg" alt="SDK Dialog" width="320" />
 
 ## SDK Banner
 
-<img src="images/banner.jpg" alt="SDK Banner" width="320" />
+<img src="images%20and%20videos/banner.jpg" alt="SDK Banner" width="320" />
 
 ---
 
